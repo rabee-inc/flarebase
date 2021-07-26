@@ -58,8 +58,11 @@ class BaseCollection extends EventEmitter {
     this._ref = ref;
   }
 
-  get ref() {
-    return this._ref;
+  async fetch({cache=true}={}) {
+    var ss = await this.ref.get();
+
+    // TODO: ここからどうやって store の document class から生成するか考える　
+    // firestore の doc から flarebase の document インスタンスを生成するすべを考える
   }
 
   doc(path) {
@@ -115,16 +118,29 @@ class BaseDocument extends EventEmitter {
     super();
 
     this._store = store;
-    this.setup(ref);
+    this.reset(ref);
   }
 
-  setup(ref) {
+  reset(ref) {
     this.unwatch();
 
     this._ref = ref;
     this._doc = null;
     this._data = null;
     this._relation = {};
+  }
+
+  // TODO:
+  setRef() {
+
+  }
+
+  // TODO:
+  setDocument(doc) {
+    this.reset();
+    this._ref = doc.ref;
+    this._doc = doc;
+    this._data = doc.data();
   }
 
   // データを取得
