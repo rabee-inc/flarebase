@@ -21,7 +21,7 @@ class BaseStore {
     return doc;
   }
 
-  collection() {
+  collection(path) {
     var collection = new BaseCollection({
       store: this,
       ref: this.db.collection(path),
@@ -61,8 +61,19 @@ class BaseCollection extends EventEmitter {
   async fetch({cache=true}={}) {
     var ss = await this.ref.get();
 
-    // TODO: ここからどうやって store の document class から生成するか考える　
-    // firestore の doc から flarebase の document インスタンスを生成するすべを考える
+    this.items = ss.docs.map(d => {
+      var StoreClass = this._store.getDocumentClass(d.ref.parent.id) || BaseDocument; // 対応する Store クラスのドキュメントを作る
+
+      var doc = new StoreClass({
+        store: this._store,
+      });
+
+      doc.setDocument(d);
+
+      return doc;
+    });
+
+    return this;
   }
 
   doc(path) {
@@ -141,6 +152,9 @@ class BaseDocument extends EventEmitter {
     this._ref = doc.ref;
     this._doc = doc;
     this._data = doc.data();
+
+    // キャッシュする
+    this._store.setCache(this.path, doc);
   }
 
   // データを取得
