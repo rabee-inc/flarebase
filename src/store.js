@@ -77,22 +77,11 @@ class BaseCollection extends EventEmitter {
   }
 
   doc(path) {
-    var ref = this.ref.doc(path);
-    var StoreClass = this._store.getDocumentClass(ref.parent.id) || BaseDocument; // 対応する Store クラスのドキュメントを作る
-
-    var doc = new StoreClass({
-      store: this._store,
-      ref: this.ref.doc(path),
-    });
-    return doc;
+    return this._store.doc(this.path + '/' + path);
   }
 
-  collection() {
-    var collection = new BaseCollection({
-      store: this._store,
-      ref: this.ref.collection(path),
-    });
-    return collection;
+  collection(path) {
+    return this._store.collection(this.path + '/' + path);
   }
 
   where() {
@@ -203,11 +192,7 @@ class BaseDocument extends EventEmitter {
   }
 
   collection(path) {
-    var collection = new BaseCollection({
-      store: this._store,
-      ref: this.ref.collection(path),
-    });
-    return collection;
+    return this._store.collection(this.path + '/' + path);
   }
 
   watch() {
