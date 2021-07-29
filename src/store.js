@@ -29,6 +29,17 @@ class StoreManager {
     return collection;
   }
 
+  docToStore(doc) {
+    var StoreClass = this.getDocumentStoreClass(doc.ref.parent.id) || DocumentStore; // 対応する Store クラスのドキュメントを作る
+
+    var store = new StoreClass({
+      store: this,
+    });
+
+    store.setDocument(doc);
+    return store;
+  }
+
   setCache(key, doc) {
     this._cache[key] = doc;
   }
@@ -58,20 +69,21 @@ class CollectionStore extends EventEmitter {
     this._ref = ref;
   }
 
-  async fetch({cache=true}={}) {
+  async fetch({relation=false}={}) {
     var ss = await this.ref.get();
 
-    this.items = ss.docs.map(d => {
-      var StoreClass = this._store.getDocumentClass(d.ref.parent.id) || BaseDocument; // 対応する Store クラスのドキュメントを作る
+    var promises = ss.docs.map(async d => {
+      var store = this._store.docToStore(d);
 
-      var doc = new StoreClass({
-        store: this._store,
-      });
+      // relation flag が true の場合は relate も実行する
+      if (relation) {
+        await store.relate();
+      }
 
-      doc.setDocument(d);
-
-      return doc;
+      return store;
     });
+
+    this.items = await Promise.all(promises);
 
     return this;
   }
