@@ -111,6 +111,10 @@ class BaseCollection extends EventEmitter {
   get path() {
     return this._ref.path;
   }
+
+  get parent() {
+    return this._store.doc(this._ref.parent.path);
+  }
 }
 
 class BaseDocument extends EventEmitter {
@@ -229,6 +233,10 @@ class BaseDocument extends EventEmitter {
 
   get relation() {
     return this._relation;
+  }
+
+  get parent() {
+    return this._store.collection(this._ref.parent.path);
   }
 }
 
