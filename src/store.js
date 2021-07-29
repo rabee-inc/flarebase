@@ -3,7 +3,7 @@ import 'firebase/firestore';
 
 import EventEmitter from 'events';
 
-class BaseStore {
+class StoreManager {
   constructor() {
     this.db = firebase.firestore();
     this._cache = {};
@@ -12,7 +12,7 @@ class BaseStore {
 
   doc(path) {
     var ref = this.db.doc(path);
-    var StoreClass = this.getDocumentClass(ref.parent.id) || BaseDocument; // 対応する Store クラスのドキュメントを作る
+    var StoreClass = this.getDocumentStoreClass(ref.parent.id) || DocumentStore; // 対応する Store クラスのドキュメントを作る
 
     var doc = new StoreClass({
       store: this,
@@ -22,7 +22,7 @@ class BaseStore {
   }
 
   collection(path) {
-    var collection = new BaseCollection({
+    var collection = new CollectionStore({
       store: this,
       ref: this.db.collection(path),
     });
@@ -41,16 +41,16 @@ class BaseStore {
     this.db.settings(settings)
   }
 
-  registerDocumentClass(key, value) {
+  registerDocumentStoreClass(key, value) {
     this._documentClasses[key] = value;
   }
 
-  getDocumentClass(key) {
+  getDocumentStoreClass(key) {
     return this._documentClasses[key];
   }
 }
 
-class BaseCollection extends EventEmitter {
+class CollectionStore extends EventEmitter {
   constructor({store, ref}) {
     super();
 
@@ -121,7 +121,7 @@ class BaseCollection extends EventEmitter {
   }
 }
 
-class BaseDocument extends EventEmitter {
+class DocumentStore extends EventEmitter {
   constructor({store, ref}) {
     super();
 
@@ -245,9 +245,9 @@ class BaseDocument extends EventEmitter {
 }
 
 var store = {
-  BaseStore,
-  BaseDocument,
-  BaseCollection,
+  StoreManager,
+  CollectionStore,
+  DocumentStore,
 };
 
 export default store;
