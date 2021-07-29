@@ -84,12 +84,16 @@ class BaseCollection extends EventEmitter {
     return this._store.collection(this.path + '/' + path);
   }
 
-  where() {
+  where(...args) {
     // TODO:
+    this._ref = this.ref.where(...args);
+    return this;
   }
 
-  orderBy() {
+  orderBy(...args) {
     // TODO:
+    this._ref = this.ref.orderBy(...args);
+    return this;
   }
 
   watch() {
