@@ -188,7 +188,7 @@ class DocumentStore extends EventEmitter {
   }
 
   // データを取得
-  async fetch({cache=true}={}) {
+  async fetch({cache=true, relation=false}={}) {
     var doc = null;
 
     if (cache) {
@@ -208,6 +208,14 @@ class DocumentStore extends EventEmitter {
       this._store.setCache(this.path, docPromise);
       doc = await docPromise;
 
+      // relation が true だったら relate も一緒にやる
+      if (relation) {
+        var relatePromise = this.relate();
+        // 一旦 promise をキャッシュする
+        this._store.setCache(this.path, relatePromise);
+        doc = await docPromise;
+      }
+
       // キャッシュしていた promise を doc に置き換える
       this._store.setCache(this.path, doc);
     }
@@ -216,6 +224,14 @@ class DocumentStore extends EventEmitter {
     this._data = doc.data();
 
     return this;
+  }
+
+  // cache を無視して必ず更新する
+  async refresh({relation=false}={}) {
+    return this.fetch({
+      cache: false,
+      relation,
+    });
   }
 
   // 関連データを取得
