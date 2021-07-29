@@ -199,8 +199,12 @@ class DocumentStore extends EventEmitter {
         }
         doc = cachedDoc;
 
-        this._doc = doc;
-        this._data = doc.data();  
+        this._doc = cachedDoc;
+        this._data = doc.data();
+
+        if (relation) {
+          await this.relate();
+        }
       }
     }
 
