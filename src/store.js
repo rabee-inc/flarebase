@@ -237,15 +237,15 @@ class DocumentStore extends EventEmitter {
   }
 
   watch() {
-
+    // TODO
   }
 
   unwatch() {
-
+    // TODO
   }
 
   toData() {
-
+    // TODO
   }
 
   get ref() {
