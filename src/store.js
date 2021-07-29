@@ -198,6 +198,9 @@ class DocumentStore extends EventEmitter {
           cachedDoc = await cachedDoc;
         }
         doc = cachedDoc;
+
+        this._doc = doc;
+        this._data = doc.data();  
       }
     }
 
@@ -208,6 +211,9 @@ class DocumentStore extends EventEmitter {
       this._store.setCache(this.path, docPromise);
       doc = await docPromise;
 
+      this._doc = doc;
+      this._data = doc.data();
+  
       // relation が true だったら relate も一緒にやる
       if (relation) {
         var relatePromise = this.relate();
@@ -219,9 +225,6 @@ class DocumentStore extends EventEmitter {
       // キャッシュしていた promise を doc に置き換える
       this._store.setCache(this.path, doc);
     }
-
-    this._doc = doc;
-    this._data = doc.data();
 
     return this;
   }
