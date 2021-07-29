@@ -108,12 +108,33 @@ class CollectionStore extends EventEmitter {
     return this;
   }
 
-  watch() {
+  limit(...args) {
     // TODO:
+    this._ref = this.ref.limit(...args);
+    return this;
+  }
+
+  watch(callback) {
+    // TODO:
+    if (this.unsubscribe) {
+      this.unwatch();
+    }
+    
+    return new Promise(resolve => {
+      this.unsubscribe = this.ref.onSnapshot(async (ss) => {
+        this.items = ss.docs.map(doc => this._store.docToStore(doc));
+        
+        callback && callback();
+        resolve();
+      });
+    });
   }
 
   unwatch() {
-    // TODO:
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      delete this.unsubscribe;
+    }
   }
 
   get ref() {
