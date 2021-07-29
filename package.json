@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/rabee-inc/flarebase/issues"
   },
-  "homepage": "https://github.com/rabee-inc/flarebase#readme"
+  "homepage": "https://github.com/rabee-inc/flarebase#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3"
+  }
 }
