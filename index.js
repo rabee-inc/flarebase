@@ -1,7 +1,7 @@
-import store from './src/store.js'
+var store = require('./src/store.js')
 
 var flarebase = {
   store,
 };
 
-export default flarebase;
+module.exports = flarebase;
