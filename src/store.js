@@ -1,4 +1,4 @@
-var firebase = require('firebase/app');
+var firebase = require('firebase/app').default;
 require('firebase/firestore');
 
 const EventEmitter = require('events');
