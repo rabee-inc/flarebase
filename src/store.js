@@ -85,7 +85,7 @@ class CollectionStore extends EventEmitter {
 
     this.items = await Promise.all(promises);
 
-    return this;
+    return this.items;
   }
 
   doc(path) {
