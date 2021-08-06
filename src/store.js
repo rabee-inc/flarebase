@@ -1,7 +1,7 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+var firebase = require('firebase/app').default;
+require('firebase/firestore');
 
-import EventEmitter from 'events';
+const EventEmitter = require('events');
 
 class StoreManager {
   constructor() {
@@ -306,4 +306,4 @@ var store = {
   DocumentStore,
 };
 
-export default store;
+module.exports = store;
