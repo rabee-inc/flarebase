@@ -179,6 +179,10 @@ class DocumentStore extends EventEmitter {
   // TODO:
   setDocument(doc) {
     this.reset();
+    this.updateDocument(doc)
+  }
+
+  updateDocument(doc) {
     this._ref = doc.ref;
     this._doc = doc;
     this._data = doc.data();
@@ -259,12 +263,22 @@ class DocumentStore extends EventEmitter {
     return this._store.collection(this.path + '/' + path);
   }
 
-  watch() {
-    // TODO
+  watch(callback, { relation=false } = {}) {
+    this.unwatch();
+    this._unwatch = this.ref.onSnapshot(async (doc) => {
+      this.updateDocument(doc);
+      if (relation) {
+        await this.relate();
+      }
+      callback.call(this);
+    });
   }
 
   unwatch() {
-    // TODO
+    if (this._unwatch) {
+      this._unwatch();
+      this._unwatch = null;
+    }
   }
 
   toData() {
