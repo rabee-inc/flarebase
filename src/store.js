@@ -67,6 +67,7 @@ class CollectionStore extends EventEmitter {
 
     this._store = store;
     this._ref = ref;
+    this.items = [];
   }
 
   async fetch({relation=false}={}) {
@@ -122,8 +123,18 @@ class CollectionStore extends EventEmitter {
     
     return new Promise(resolve => {
       this.unsubscribe = this.ref.onSnapshot(async (ss) => {
-        this.items = ss.docs.map(doc => this._store.docToStore(doc));
-        
+        const prevItems = this.items;
+        this.items = ss.docs.map(doc => {
+          const item = prevItems.find(prevItem => prevItem.id === doc.id);
+          if (item) {
+            item.updateDocument(doc);
+            return item;
+          }
+          else {
+            return this._store.docToStore(doc);
+          }
+        });
+
         callback && callback();
         resolve();
       });
@@ -243,15 +254,15 @@ class DocumentStore extends EventEmitter {
 
   // 関連データを取得
   async relate() {
+    var relation = {};
     var promises = Object.entries(this.data).map(async ([key, value]) => {
       if (value instanceof firebase.firestore.DocumentReference) {
         var child = await this._store.doc(value.path).fetch();
-        this.relation[key.replace('_ref', '')] = child;
+        relation[key.replace('_ref', '')] = child;
       }
     });
-  
     await Promise.all(promises);
-  
+    this._relation = relation;
     return this;
   }
 
