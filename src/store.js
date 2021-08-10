@@ -115,7 +115,7 @@ class CollectionStore extends EventEmitter {
     return this;
   }
 
-  watch(callback) {
+  watch() {
     // TODO:
     if (this.unsubscribe) {
       this.unwatch();
@@ -134,8 +134,7 @@ class CollectionStore extends EventEmitter {
             return this._store.docToStore(doc);
           }
         });
-
-        callback && callback();
+        this.emit('snapshot');
         resolve();
       });
     });
@@ -274,14 +273,14 @@ class DocumentStore extends EventEmitter {
     return this._store.collection(this.path + '/' + path);
   }
 
-  watch(callback, { relation=false } = {}) {
+  watch({ relation=false } = {}) {
     this.unwatch();
     this._unwatch = this.ref.onSnapshot(async (doc) => {
       this.updateDocument(doc);
       if (relation) {
         await this.relate();
       }
-      callback.call(this);
+      this.emit('snapshot');
     });
   }
 
