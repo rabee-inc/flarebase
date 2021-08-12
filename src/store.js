@@ -223,30 +223,37 @@ class DocumentStore extends EventEmitter {
     }
 
     if (!doc) {
-      var docPromise = this.ref.get();
-    
-      // 一旦 promise をキャッシュする
-      this._store.setCache(this.path, docPromise);
-      doc = await docPromise;
-    
-      this._doc = doc;
-      this._data = doc.data();
-    
-      // relation が true だったら relate も一緒にやる
+      // ドキュメントを取得して data にセットする promise を作成
+      var promise = new Promise(async (resolve) => {
+        var doc = await this.ref.get();
+
+        this._doc = doc;
+        this._data = doc.data();
+
+        resolve(doc);
+      });
+
+      // relation が true の場合は relate 含め待つ
       if (relation) {
-        var relatePromise = new Promise(async (resolve) => {
+        // もともとの promise を保持しておく
+        var tempPromise = promise;
+        promise = new Promise(async (resolve) => {
+          // ドキュメント取得の promise を待つ
+          var doc = await tempPromise;
+          // relation 取得
           await this.relate();
           // あくまで返すのは doc
           resolve(doc);
-        })
-        // 監視対象を relatePromise に変更する
-        this._store.setCache(this.path, relatePromise);
-    
-        // relate が終わるのを待つ
-        await relatePromise;
+        });
       }
-    
-      // キャッシュしていた promise を doc に置き換える
+
+      // 一旦 promise をキャッシュする
+      this._store.setCache(this.path, promise);
+
+      // 待つ
+      var doc = await promise;
+
+      // 結果をキャッシュにセット
       this._store.setCache(this.path, doc);
     }
 
