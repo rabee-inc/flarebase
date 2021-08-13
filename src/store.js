@@ -223,25 +223,24 @@ class DocumentStore extends EventEmitter {
     }
 
     if (!doc) {
+      // ドキュメントを取得して data にセットする promise を作成
       var docPromise = this.ref.get();
 
       // 一旦 promise をキャッシュする
       this._store.setCache(this.path, docPromise);
-      doc = await docPromise;
 
+      // 待つ
+      var doc = await docPromise;
       this._doc = doc;
       this._data = doc.data();
-  
-      // relation が true だったら relate も一緒にやる
-      if (relation) {
-        var relatePromise = this.relate();
-        // 一旦 promise をキャッシュする
-        this._store.setCache(this.path, relatePromise);
-        doc = await docPromise;
-      }
 
-      // キャッシュしていた promise を doc に置き換える
+      // 結果をキャッシュにセット
       this._store.setCache(this.path, doc);
+
+      // relation が true の場合は relate 含め待つ
+      if (relation) {
+        await this.relate();
+      }
     }
 
     return this;
