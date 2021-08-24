@@ -134,7 +134,9 @@ class CollectionStore extends EventEmitter {
             return this._store.docToStore(doc);
           }
         });
-        this.emit('snapshot');
+        this.emit('snapshot', {
+          snapshot: ss,
+        });
         resolve();
       });
     });
