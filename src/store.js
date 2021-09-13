@@ -149,6 +149,11 @@ class CollectionStore extends EventEmitter {
     }
   }
 
+  async add(data) {
+    const ref = await this.ref.add(data);
+    return this._store.doc(ref.path);
+  }
+
   get ref() {
     return this._ref;
   }
@@ -294,6 +299,18 @@ class DocumentStore extends EventEmitter {
 
   toData() {
     // TODO
+  }
+
+  update(...args) {
+    return this.ref.update(...args);
+  }
+
+  set(...args) {
+    return this.ref.set(...args);
+  }
+
+  delete() {
+    return this.ref.delete();
   }
 
   get ref() {
