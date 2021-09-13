@@ -301,6 +301,18 @@ class DocumentStore extends EventEmitter {
     // TODO
   }
 
+  update(...args) {
+    return this.ref.update(...args);
+  }
+
+  set(...args) {
+    return this.ref.set(...args);
+  }
+
+  delete() {
+    return this.ref.delete();
+  }
+
   get ref() {
     return this._ref;
   }
