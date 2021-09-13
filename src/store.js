@@ -149,6 +149,11 @@ class CollectionStore extends EventEmitter {
     }
   }
 
+  async add(data) {
+    const ref = await this.ref.add(data);
+    return this._store.doc(ref.path);
+  }
+
   get ref() {
     return this._ref;
   }
