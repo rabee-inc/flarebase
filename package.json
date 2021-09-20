@@ -20,6 +20,6 @@
     "babel-core": "^6.26.3"
   },
   "dependencies": {
-    "firebase": "^8.8.1"
+    "firebase": "8.8.1"
   }
 }
