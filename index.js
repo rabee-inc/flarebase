@@ -1,16 +1,16 @@
-var firebase = require('firebase/app').default;
+// var firebase = require('firebase/app').default;
 var auth = require('./src/auth.js');
 var store = require('./src/store.js');
 
 require('firebase/storage');
 
 var flarebase = {
-  firebase,
+  // firebase,
 
-  init(config) {
-    this.firebase = firebase;
-    firebase.initializeApp(config);
-  },
+  // init(config) {
+  //   this.firebase = firebase;
+  //   firebase.initializeApp(config);
+  // },
 
   auth,
   store,

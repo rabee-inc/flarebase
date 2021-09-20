@@ -1,6 +1,6 @@
-var firebase = require('firebase/app').default;
+// var firebase = require('firebase/app').default;
 
-require('firebase/auth');
+// require('firebase/auth');
 
 
 var auth = {
