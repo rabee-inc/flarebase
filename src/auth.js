@@ -1,8 +1,3 @@
-var firebase = require('firebase/app').default;
-
-require('firebase/auth');
-
-
 var auth = {
   init() {
     // auth チェック用 promise

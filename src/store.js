@@ -1,13 +1,13 @@
-var firebase = require('firebase/app').default;
-require('firebase/firestore');
-
 const EventEmitter = require('events');
 
 class StoreManager {
   constructor() {
-    this.db = firebase.firestore();
     this._cache = {};
     this._documentClasses = {};
+  }
+
+  init(database) {
+    this.db = database;
   }
 
   doc(path) {
@@ -88,6 +88,13 @@ class CollectionStore extends EventEmitter {
 
     return this.items;
   }
+
+  // more({relation=false}={}) {
+  //   var store = this;
+  //   if (this.items.length > 0) {
+      
+  //   }
+  // }
 
   doc(path) {
     return this._store.doc(this.path + '/' + path);
