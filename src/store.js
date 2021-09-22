@@ -89,12 +89,12 @@ class CollectionStore extends EventEmitter {
     return this.items;
   }
 
-  more({relation=false}={}) {
-    var store = this;
-    if (this.items.length > 0) {
+  // more({relation=false}={}) {
+  //   var store = this;
+  //   if (this.items.length > 0) {
       
-    }
-  }
+  //   }
+  // }
 
   doc(path) {
     return this._store.doc(this.path + '/' + path);
