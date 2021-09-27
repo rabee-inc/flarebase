@@ -105,20 +105,22 @@ class CollectionStore extends EventEmitter {
   }
 
   where(...args) {
-    // TODO:
     this._ref = this.ref.where(...args);
     return this;
   }
 
   orderBy(...args) {
-    // TODO:
     this._ref = this.ref.orderBy(...args);
     return this;
   }
 
   limit(...args) {
-    // TODO:
     this._ref = this.ref.limit(...args);
+    return this;
+  }
+
+  startAfter(...args) {
+    this._ref = this.ref.startAfter(...args);
     return this;
   }
 
