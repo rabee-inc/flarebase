@@ -124,6 +124,15 @@ class CollectionStore extends EventEmitter {
     return this;
   }
 
+  observer(callback) {
+    var observer = new CollectionStoreObserver({
+      store: this,
+      callback,
+    });
+
+    return observer;
+  }
+
   watch() {
     // TODO:
     if (this.unsubscribe) {
@@ -351,10 +360,66 @@ class DocumentStore extends EventEmitter {
   }
 }
 
+class CollectionStoreObserver extends EventEmitter {
+  constructor({store, callback}) {
+    super();
+
+    this._store = store;
+    this._callback = callback;
+    this.items = [];
+  }
+
+  observe() {
+    if (this.unsubscribe) {
+      this.unwatch();
+    }
+    
+    return this._onSnapshot();
+  }
+
+  unobserve() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      delete this.unsubscribe;
+    }
+  }
+
+  _onSnapshot() {
+    return new Promise(resolve => {
+      this.unsubscribe = this._store.ref.onSnapshot(async (ss) => {
+        const prevItems = this.items;
+        this.items = ss.docs.map(doc => {
+          const item = prevItems.find(prevItem => prevItem.id === doc.id);
+          if (item) {
+            item.updateDocument(doc);
+            return item;
+          }
+          else {
+            return this._store._store.docToStore(doc);
+          }
+        });
+
+        var e = {
+          observer: this,
+          snapshot: ss,
+        };
+
+        this._callback && this._callback(e);
+        this.emit('snapshot', e);
+
+        resolve();
+      });
+    });
+  }
+}
+
+
+
 var store = {
   StoreManager,
   CollectionStore,
   DocumentStore,
+  CollectionStoreObserver,
 };
 
 module.exports = store;
