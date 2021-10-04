@@ -127,11 +127,8 @@ class CollectionStore extends EventEmitter {
   observer(callback) {
     var observer = new CollectionStoreObserver({
       store: this,
+      callback,
     });
-
-    if (callback) {
-      observer.callback = callback;
-    }
 
     return observer;
   }
@@ -364,10 +361,11 @@ class DocumentStore extends EventEmitter {
 }
 
 class CollectionStoreObserver extends EventEmitter {
-  constructor({store}) {
+  constructor({store, callback}) {
     super();
 
     this._store = store;
+    this._callback = callback;
     this.items = [];
   }
 
@@ -406,7 +404,7 @@ class CollectionStoreObserver extends EventEmitter {
           snapshot: ss,
         };
 
-        this.callback && this.callback(e);
+        this._callback && this._callback(e);
         this.emit('snapshot', e);
 
         resolve();
