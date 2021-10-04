@@ -124,10 +124,16 @@ class CollectionStore extends EventEmitter {
     return this;
   }
 
-  observer() {
-    return new CollectionStoreObserver({
+  observer(callback) {
+    var observer = new CollectionStoreObserver({
       store: this,
     });
+
+    if (callback) {
+      observer.callback = callback;
+    }
+
+    return observer;
   }
 
   watch() {
@@ -365,7 +371,7 @@ class CollectionStoreObserver extends EventEmitter {
     this.items = [];
   }
 
-  watch() {
+  observe() {
     if (this.unsubscribe) {
       this.unwatch();
     }
@@ -373,7 +379,7 @@ class CollectionStoreObserver extends EventEmitter {
     return this._onSnapshot();
   }
 
-  unwatch() {
+  unobserve() {
     if (this.unsubscribe) {
       this.unsubscribe();
       delete this.unsubscribe;
@@ -394,9 +400,15 @@ class CollectionStoreObserver extends EventEmitter {
             return this._store._store.docToStore(doc);
           }
         });
-        this.emit('snapshot', {
+
+        var e = {
+          observer: this,
           snapshot: ss,
-        });
+        };
+
+        this.callback && this.callback(e);
+        this.emit('snapshot', e);
+
         resolve();
       });
     });
