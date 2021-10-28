@@ -29,6 +29,14 @@ class StoreManager {
     return collection;
   }
 
+  collectionGroup(path) {
+    var collectionGroup = new CollectionStore({
+      store: this,
+      ref: this.db.collectionGroup(path),
+    });
+    return collectionGroup;
+  }
+
   docToStore(doc) {
     var StoreClass = this.getDocumentStoreClass(doc.ref.parent.id) || DocumentStore; // 対応する Store クラスのドキュメントを作る
 
@@ -121,11 +129,6 @@ class CollectionStore extends EventEmitter {
 
   startAfter(...args) {
     this._ref = this.ref.startAfter(...args);
-    return this;
-  }
-
-  collectionGroup(...args) {
-    this._ref = this.ref.collectionGroup(...args);
     return this;
   }
 
