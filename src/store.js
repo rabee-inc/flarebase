@@ -1,7 +1,8 @@
 const EventEmitter = require('events');
 
-class StoreManager {
+class StoreManager extends EventEmitter {
   constructor() {
+    super();
     this._cache = {};
     this._documentClasses = {};
   }
@@ -306,13 +307,16 @@ class DocumentStore extends EventEmitter {
   }
 
   watch({ relation=false } = {}) {
-    this.unwatch();
-    this._unwatch = this.ref.onSnapshot(async (doc) => {
-      this.updateDocument(doc);
-      if (relation) {
-        await this.relate();
-      }
-      this.emit('snapshot');
+    return new Promise((resolve) => {
+      this.unwatch();
+      this._unwatch = this.ref.onSnapshot(async (doc) => {
+        this.updateDocument(doc);
+        if (relation) {
+          await this.relate();
+        }
+        this.emit('snapshot');
+        resolve();
+      });  
     });
   }
 
