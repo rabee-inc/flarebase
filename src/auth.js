@@ -25,7 +25,7 @@ class Auth extends EventEmitter {
     });
 
     // redirect result 時のイベントを登録しておく
-    app.auth.getRedirectResult().then(this._callbackRedirectResult.bind(this)).catch(this._callbackRedirectResultFail.bind(this));
+    this.auth.getRedirectResult().then(this._callbackRedirectResult.bind(this)).catch(this._callbackRedirectResultFail.bind(this));
   }
 
   // auth の状態をする関数
@@ -39,7 +39,8 @@ class Auth extends EventEmitter {
     }
   }
 
-  async signIn(email, password) {
+  // email と password でサインイン
+  async signInWithEmailAndPassword(email, password) {
     try {
       var res = await this.auth.signInWithEmailAndPassword(email, password);
       this.emit('signin', res);
@@ -58,6 +59,7 @@ class Auth extends EventEmitter {
     this.auth.signInWithRedirect(provider);
   }
 
+  // email と password でサインアップ
   async createUserWithEmailAndPassword(email, password) {
     try {
       await this.auth.createUserWithEmailAndPassword(email, password);
@@ -71,24 +73,6 @@ class Auth extends EventEmitter {
       throw Error(e);
     }
   }
-
-//   async signUp({email, password, invite_id}) {
-//     try {
-//       await firebase.auth().createUserWithEmailAndPassword(email, password);
-//       // ユーザーを作成
-//       var user = await app.api.child('me/sign_in').post({invite_id});
-//       await this.updateUserData({
-//         email: email,
-//       });
-//     }
-//     catch(e) {
-//       var message = this._codeToErrorMessage(e.code);
-//       spat.modal.alert(message);
-
-//       throw Error(message);
-//     }
-//   },
-
 
   isSignIn() {
     return !!this.auth.currentUser;
@@ -155,37 +139,7 @@ class Auth extends EventEmitter {
 
     return message || code;
   }
-}
-
-// var auth = {
-//   init() {
-//     // auth チェック用 promise
-//     this.authPromise = new Promise(resolve => {
-//       var completed = firebase.auth().onIdTokenChanged(async (user) => {
-//         // 監視を停止
-//         completed();
-    
-//         if (user) {
-//           resolve(user);
-//         }
-//         else {
-//           resolve(null);
-//         }
-//       });
-//     });
-//   },
-
-//   // auth の状態をする関数
-//   checkAuth() {
-//     var currentUser = firebase.auth().currentUser;
-//     if (currentUser) {
-//       return Promise.resolve(currentUser);
-//     }
-//     else {
-//       return this.authPromise;
-//     }
-//   },
-// };
+};
 
 module.exports = {
   Auth,
