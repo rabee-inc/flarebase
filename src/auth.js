@@ -23,6 +23,9 @@ class Auth extends EventEmitter {
         }
       });
     });
+
+    // redirect result 時のイベントを登録しておく
+    app.auth.getRedirectResult().then(this._callbackRedirectResult.bind(this)).catch(this._callbackRedirectResultFail.bind(this));
   }
 
   // auth の状態をする関数
@@ -38,7 +41,8 @@ class Auth extends EventEmitter {
 
   async signIn(email, password) {
     try {
-      await this.auth.signInWithEmailAndPassword(email, password);
+      var res = await this.auth.signInWithEmailAndPassword(email, password);
+      this.emit('signin', res);
     }
     catch(e) {
       var message = this._codeToErrorMessage(e.code);
@@ -48,6 +52,10 @@ class Auth extends EventEmitter {
 
       throw Error(e);
     }
+  }
+
+  signInWithRedirect(provider) {
+    this.auth.signInWithRedirect(provider);
   }
 
   async createUserWithEmailAndPassword(email, password) {
@@ -86,18 +94,34 @@ class Auth extends EventEmitter {
     return !!this.auth.currentUser;
   }
 
-  signOut() {
-    this.auth.signOut().then(() => {
-      riot.update();
-    });
+  async signOut() {
+    await this.auth.signOut();
+    this.emit('signout');
   }
 
   get currentUser() {
     return this.auth.currentUser;
   }
 
+  // リダイレクトログイン成功時の処理
+  _callbackRedirectResult(result) {
+    this.emit('result', result);
+
+    if (result.user) {
+      this.emit('signin');
+    }
+  }
+
+  // リダイレクトログイン失敗時の処理
+  _callbackRedirectResultFail(e) {
+    var message = this._codeToErrorMessage(e.code);
+    e.message = message;
+
+    this.emit('fail', e);
+  }
 
   /*
+   * code をエラーメッセージに変換
    * ref: https://firebase.google.com/docs/auth/admin/errors?hl=ja
    */
   _codeToErrorMessage(code) {
