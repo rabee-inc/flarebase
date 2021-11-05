@@ -87,6 +87,40 @@ class Auth extends EventEmitter {
     return this.auth.currentUser;
   }
 
+  // パスワードリセットメールを送る
+  async sendPasswordResetEmail(email, options) {
+    try {
+      // firebase auth 経由でパスワードリセットリクエスト
+      await this.auth.sendPasswordResetEmail(email, options);
+    }
+    catch(e) {
+      // エラーハンドリング
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
+  // email を更新
+  async updateEmail(email, options) {
+    try {
+      // firebase auth 経由で email を更新
+      await this.currentUser.updateEmail(email);
+    }
+    catch(e) {
+      // エラーハンドリング
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
   // リダイレクトログイン成功時の処理
   _callbackRedirectResult(result) {
     this.emit('result', result);
