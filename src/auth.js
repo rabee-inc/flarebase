@@ -106,11 +106,60 @@ class Auth extends EventEmitter {
     }
   }
 
+  // メール認証
+  async sendEmailVerification(options) {
+    try {
+      // firebase auth 経由でパスワードリセットリクエスト
+      await this.auth.currentUser.sendEmailVerification(options);
+    }
+    catch(e) {
+      // エラーハンドリング
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
   // email を更新
   async updateEmail(email, options) {
     try {
       // firebase auth 経由で email を更新
       await this.currentUser.updateEmail(email);
+    }
+    catch(e) {
+      // エラーハンドリング
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
+  // email を認証有りで更新
+  async verifyBeforeUpdateEmail(email, options) {
+    try {
+      await this.currentUser.verifyBeforeUpdateEmail(email);
+    }
+    catch(e) {
+      // エラーハンドリング
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
+  // パスワードを更新
+  async updatePassword(password) {
+    try {
+      await this.currentUser.updatePassword(password);
     }
     catch(e) {
       // エラーハンドリング
