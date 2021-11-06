@@ -60,6 +60,22 @@ class Auth extends EventEmitter {
     }
   }
 
+  // credential でサインイン
+  async signInWithCredential(credential) {
+    try {
+      var res = await this.auth.signInWithCredential(credential);
+      this.emit('signin', res);
+    }
+    catch(e) {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
   signInWithRedirect(provider) {
     this.auth.signInWithRedirect(provider);
   }
