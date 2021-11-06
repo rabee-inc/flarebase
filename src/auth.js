@@ -24,6 +24,11 @@ class Auth extends EventEmitter {
       });
     });
 
+    // ログイン状態がわかるようになったタイミングで 1回だけ trigger する
+    this.authPromise.then((user) => {
+      this.emit('ready', user);
+    });
+
     // redirect result 時のイベントを登録しておく
     this.auth.getRedirectResult().then(this._callbackRedirectResult.bind(this)).catch(this._callbackRedirectResultFail.bind(this));
   }
