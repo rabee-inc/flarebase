@@ -239,6 +239,7 @@ class Auth extends EventEmitter {
       'auth/web-storage-unsupported': 'Cookieがブロックされている可能性があります。ブラウザの設定をご確認ください。',
       'auth/user-disabled': 'このアカウントは退会済みもしくは無効なアカウントです。',
       'auth/requires-recent-login': 'この操作は機密性が高く再度ログインする必要があります。ログアウトして再度ログインしてからお試しください。',
+      'auth/configuration-not-found': '構成が見つかりませんでした。',
     }[code];
 
     console.error(code, message);
