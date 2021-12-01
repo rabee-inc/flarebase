@@ -133,6 +133,16 @@ class CollectionStore extends EventEmitter {
     return this;
   }
 
+  startAt(...args) {
+    this._ref = this.ref.startAt(...args);
+    return this;
+  }
+
+  endAt(...args) {
+    this._ref = this.ref.endAt(...args);
+    return this;
+  }
+
   observer(callback) {
     var observer = new CollectionStoreObserver({
       store: this,
