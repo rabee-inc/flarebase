@@ -98,7 +98,7 @@ class Auth extends EventEmitter {
   }
 
   isSignIn() {
-    return !!this.auth.currentUser;
+    return this.auth && !!this.auth.currentUser;
   }
 
   async signOut() {
