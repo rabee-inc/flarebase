@@ -44,6 +44,21 @@ class Auth extends EventEmitter {
     }
   }
 
+  async _doFirebaseFunction(funcname, ...args) {
+    try {
+      var res = await this.auth[funcname](...args);
+      return res;
+    }
+    catch(e) {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
   // email と password でサインイン
   async signInWithEmailAndPassword(email, password) {
     try {
