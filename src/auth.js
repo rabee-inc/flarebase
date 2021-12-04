@@ -80,6 +80,7 @@ class Auth extends EventEmitter {
     try {
       var res = await this.auth.signInWithCredential(credential);
       this.emit('signin', res);
+      return res;
     }
     catch(e) {
       var message = this._codeToErrorMessage(e.code);
@@ -92,7 +93,7 @@ class Auth extends EventEmitter {
   }
 
   signInWithRedirect(provider) {
-    this.auth.signInWithRedirect(provider);
+    return this.auth.signInWithRedirect(provider);
   }
 
   // email と password でサインアップ
@@ -101,6 +102,7 @@ class Auth extends EventEmitter {
       var res = await this.auth.createUserWithEmailAndPassword(email, password);
       this.emit('signup', res);
       this.emit('signin', res);
+      return res;
     }
     catch(e) {
       var message = this._codeToErrorMessage(e.code);
@@ -117,8 +119,10 @@ class Auth extends EventEmitter {
   }
 
   async signOut() {
-    await this.auth.signOut();
+    var res = await this.auth.signOut();
     this.emit('signout');
+
+    return res;
   }
 
   get currentUser() {
@@ -129,7 +133,7 @@ class Auth extends EventEmitter {
   async sendPasswordResetEmail(email, options) {
     try {
       // firebase auth 経由でパスワードリセットリクエスト
-      await this.auth.sendPasswordResetEmail(email, options);
+      return await this.auth.sendPasswordResetEmail(email, options);
     }
     catch(e) {
       // エラーハンドリング
@@ -146,7 +150,7 @@ class Auth extends EventEmitter {
   async sendEmailVerification(options) {
     try {
       // firebase auth 経由でパスワードリセットリクエスト
-      await this.auth.currentUser.sendEmailVerification(options);
+      return await this.auth.currentUser.sendEmailVerification(options);
     }
     catch(e) {
       // エラーハンドリング
@@ -163,7 +167,7 @@ class Auth extends EventEmitter {
   async updateEmail(email, options) {
     try {
       // firebase auth 経由で email を更新
-      await this.currentUser.updateEmail(email);
+      return await this.currentUser.updateEmail(email);
     }
     catch(e) {
       // エラーハンドリング
@@ -179,7 +183,7 @@ class Auth extends EventEmitter {
   // email を認証有りで更新
   async verifyBeforeUpdateEmail(email, options) {
     try {
-      await this.currentUser.verifyBeforeUpdateEmail(email);
+      return await this.currentUser.verifyBeforeUpdateEmail(email);
     }
     catch(e) {
       // エラーハンドリング
@@ -195,7 +199,7 @@ class Auth extends EventEmitter {
   // パスワードを更新
   async updatePassword(password) {
     try {
-      await this.currentUser.updatePassword(password);
+      return await this.currentUser.updatePassword(password);
     }
     catch(e) {
       // エラーハンドリング
