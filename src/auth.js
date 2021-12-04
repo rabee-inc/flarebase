@@ -198,8 +198,6 @@ class Auth extends EventEmitter {
 
   // リダイレクトログイン成功時の処理
   _callbackRedirectResult(result) {
-    this.emit('result', result);
-
     if (result.user) {
       this.emit('signin', result);
     }
