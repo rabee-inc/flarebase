@@ -85,7 +85,6 @@ class Auth extends EventEmitter {
   async createUserWithEmailAndPassword(email, password) {
     try {
       var res = await this.auth.createUserWithEmailAndPassword(email, password);
-      this.emit('signup', res);
       this.emit('signin', res);
       return res;
     }
@@ -202,7 +201,7 @@ class Auth extends EventEmitter {
     this.emit('result', result);
 
     if (result.user) {
-      this.emit('signin');
+      this.emit('signin', result);
     }
   }
 
