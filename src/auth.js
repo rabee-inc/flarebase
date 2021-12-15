@@ -214,17 +214,49 @@ class Auth extends EventEmitter {
 
   // 許可されているログイン方法を返す
   fetchSignInMethodsForEmail(email) {
-    return this.auth.fetchSignInMethodsForEmail(email);
+    try {
+      return this.auth.fetchSignInMethodsForEmail(email);
+    }
+    catch(e) {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
   }
 
   // ログインリンクメールを送信
   sendSignInLinkToEmail(email, actionCodeSettings) {
-    return this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
+    try {
+      return this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
+    }
+    catch(e) {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
   }
 
   // メールリンクでのログイン
-  signInWithEmailLink(email, emailLink) {
-    return this.auth.signInWithEmailLink(email, emailLink);
+  async signInWithEmailLink(email, emailLink) {
+    try {
+      var res = await this.auth.signInWithEmailLink(email, emailLink);
+      this.emit('signin', res);
+      return res;
+    }
+    catch(e) {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
   }
 
   // メールリンクと location.href が一致するかの判定
@@ -248,6 +280,7 @@ class Auth extends EventEmitter {
       // sign in
       'auth/user-not-found': 'ユーザーが見つかりませんでした。',
       'auth/wrong-password': 'メールアドレスまたはパスワードが間違っています。',
+      'auth/invalid-action-code': '無効なアクションコードです。',
       // sns
       'auth/popup-closed-by-user': 'ログイン処理が中断されました',
       'auth/user-cancelled': 'ログインを拒否しました',
