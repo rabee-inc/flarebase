@@ -216,6 +216,11 @@ class Auth extends EventEmitter {
     return this.auth.fetchSignInMethodsForEmail(email);
   }
 
+  // サインインリンクメールを送信
+  sendSignInLinkToEmail(email, options) {
+    return this.auth.sendSignInLinkToEmail(email, options);
+  }
+
   /*
    * code をエラーメッセージに変換
    * ref: https://firebase.google.com/docs/auth/admin/errors?hl=ja
