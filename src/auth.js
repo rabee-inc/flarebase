@@ -1,3 +1,4 @@
+const { Console } = require('console');
 const EventEmitter = require('events');
 
 class Auth extends EventEmitter {
@@ -222,8 +223,13 @@ class Auth extends EventEmitter {
   }
 
   // メールリンクでのログイン
-  signInWithEmailLink (email, emailLink) {
+  signInWithEmailLink(email, emailLink) {
     return this.auth.signInWithEmailLink(email, emailLink);
+  }
+
+  // メールリンクと location.href が一致するかの判定
+  isSignInWithEmailLink(emailLink) {
+    return this.auth.isSignInWithEmailLink(emailLink);
   }
 
   /*
