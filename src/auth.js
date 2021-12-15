@@ -212,9 +212,9 @@ class Auth extends EventEmitter {
   }
 
   // 許可されているログイン方法を返す
-  fetchSignInMethodsForEmail(email) {
+  async fetchSignInMethodsForEmail(email) {
     try {
-      return this.auth.fetchSignInMethodsForEmail(email);
+      return await this.auth.fetchSignInMethodsForEmail(email);
     }
     catch(e) {
       var message = this._codeToErrorMessage(e.code);
@@ -227,9 +227,9 @@ class Auth extends EventEmitter {
   }
 
   // ログインリンクメールを送信
-  sendSignInLinkToEmail(email, actionCodeSettings) {
+  async sendSignInLinkToEmail(email, actionCodeSettings) {
     try {
-      return this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
+      return await this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
     }
     catch(e) {
       var message = this._codeToErrorMessage(e.code);
