@@ -211,6 +211,11 @@ class Auth extends EventEmitter {
     this.emit('fail', e);
   }
 
+  // 許可されているログイン方法を返す
+  fetchSignInMethodsForEmail(email) {
+    return this.auth.fetchSignInMethodsForEmail(email);
+  }
+
   /*
    * code をエラーメッセージに変換
    * ref: https://firebase.google.com/docs/auth/admin/errors?hl=ja
