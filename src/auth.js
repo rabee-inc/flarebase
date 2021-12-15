@@ -1,4 +1,3 @@
-const { Console } = require('console');
 const EventEmitter = require('events');
 
 class Auth extends EventEmitter {
