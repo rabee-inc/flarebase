@@ -216,9 +216,14 @@ class Auth extends EventEmitter {
     return this.auth.fetchSignInMethodsForEmail(email);
   }
 
-  // サインインリンクメールを送信
-  sendSignInLinkToEmail(email, options) {
-    return this.auth.sendSignInLinkToEmail(email, options);
+  // ログインリンクメールを送信
+  sendSignInLinkToEmail(email, actionCodeSettings) {
+    return this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
+  }
+
+  // メールリンクでのログイン
+  signInWithEmailLink (email, emailLink) {
+    return this.auth.signInWithEmailLink(email, emailLink);
   }
 
   /*
