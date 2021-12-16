@@ -211,6 +211,58 @@ class Auth extends EventEmitter {
     this.emit('fail', e);
   }
 
+  // 許可されているログイン方法を返す
+  async fetchSignInMethodsForEmail(email) {
+    try {
+      return await this.auth.fetchSignInMethodsForEmail(email);
+    }
+    catch(e) {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
+  // ログインリンクメールを送信
+  async sendSignInLinkToEmail(email, actionCodeSettings) {
+    try {
+      return await this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
+    }
+    catch(e) {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
+  // メールリンクでのログイン
+  async signInWithEmailLink(email, emailLink) {
+    try {
+      var res = await this.auth.signInWithEmailLink(email, emailLink);
+      this.emit('signin', res);
+      return res;
+    }
+    catch(e) {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+
+      this.emit('fail', e);
+
+      throw Error(e);
+    }
+  }
+
+  // メールリンクと location.href が一致するかの判定
+  isSignInWithEmailLink(emailLink) {
+    return this.auth.isSignInWithEmailLink(emailLink);
+  }
+
   /*
    * code をエラーメッセージに変換
    * ref: https://firebase.google.com/docs/auth/admin/errors?hl=ja
@@ -227,6 +279,7 @@ class Auth extends EventEmitter {
       // sign in
       'auth/user-not-found': 'ユーザーが見つかりませんでした。',
       'auth/wrong-password': 'メールアドレスまたはパスワードが間違っています。',
+      'auth/invalid-action-code': '無効なアクションコードです。',
       // sns
       'auth/popup-closed-by-user': 'ログイン処理が中断されました',
       'auth/user-cancelled': 'ログインを拒否しました',
