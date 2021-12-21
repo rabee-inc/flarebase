@@ -1,14 +1,24 @@
-const EventEmitter = require('events');
+const AsyncEventEmitter = require('./async-event-emitter');
 
-class Auth extends EventEmitter {
+class Auth extends AsyncEventEmitter {
   constructor() {
     super();
   }
 
-  init(firebase) {
+  async init(firebase) {
     this.firebase = firebase;
     this.auth = firebase.auth();
 
+    // redirect result 時のイベントを登録しておく
+    var result = await this.auth.getRedirectResult()
+
+    if (result.user) {
+      await  this.emitAsync('signin', result);
+    }
+
+    // result_promise.then(this._callbackRedirectResult.bind(this)).catch(this._callbackRedirectResultFail.bind(this));
+    // await result_promise;
+    
     // auth チェック用 promise
     this.authPromise = new Promise(resolve => {
       var completed = this.auth.onIdTokenChanged(async (user) => {
@@ -29,8 +39,6 @@ class Auth extends EventEmitter {
       this.emit('ready', user);
     });
 
-    // redirect result 時のイベントを登録しておく
-    this.auth.getRedirectResult().then(this._callbackRedirectResult.bind(this)).catch(this._callbackRedirectResultFail.bind(this));
   }
 
   // auth の状態をする関数
@@ -199,7 +207,7 @@ class Auth extends EventEmitter {
   // リダイレクトログイン成功時の処理
   _callbackRedirectResult(result) {
     if (result.user) {
-      this.emit('signin', result);
+      return this.emitAsync('signin', result);
     }
   }
 
