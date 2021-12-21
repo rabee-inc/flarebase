@@ -6,7 +6,6 @@ class Auth extends AsyncEventEmitter {
   }
 
   async init(firebase) {
-    debugger;
     this.firebase = firebase;
     this.auth = firebase.auth();
 
