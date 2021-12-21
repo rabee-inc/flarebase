@@ -10,7 +10,7 @@ class Auth extends AsyncEventEmitter {
     this.auth = firebase.auth();
 
     // redirect result を取得
-    var result = await this.auth.getRedirectResult().catch(() => {
+    var result = await this.auth.getRedirectResult().catch((e) => {
       var message = this._codeToErrorMessage(e.code);
       e.message = message;
   
@@ -18,7 +18,7 @@ class Auth extends AsyncEventEmitter {
     });
 
     // user があれば signin を発火
-    if (result.user) {
+    if (result && result.user) {
       await this.emitAsync('signin', result);
     }
     
