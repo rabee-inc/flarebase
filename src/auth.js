@@ -6,18 +6,22 @@ class Auth extends AsyncEventEmitter {
   }
 
   async init(firebase) {
+    debugger;
     this.firebase = firebase;
     this.auth = firebase.auth();
 
-    // redirect result 時のイベントを登録しておく
-    var result = await this.auth.getRedirectResult()
+    // redirect result を取得
+    var result = await this.auth.getRedirectResult().catch(() => {
+      var message = this._codeToErrorMessage(e.code);
+      e.message = message;
+  
+      this.emit('fail', e);  
+    });
 
+    // user があれば signin を発火
     if (result.user) {
-      await  this.emitAsync('signin', result);
+      await this.emitAsync('signin', result);
     }
-
-    // result_promise.then(this._callbackRedirectResult.bind(this)).catch(this._callbackRedirectResultFail.bind(this));
-    // await result_promise;
     
     // auth チェック用 promise
     this.authPromise = new Promise(resolve => {
@@ -35,10 +39,8 @@ class Auth extends AsyncEventEmitter {
     });
 
     // ログイン状態がわかるようになったタイミングで 1回だけ trigger する
-    this.authPromise.then((user) => {
-      this.emit('ready', user);
-    });
-
+    var user = await this.authPromise;
+    this.emit('ready', user);
   }
 
   // auth の状態をする関数
@@ -202,21 +204,6 @@ class Auth extends AsyncEventEmitter {
 
       throw Error(e);
     }
-  }
-
-  // リダイレクトログイン成功時の処理
-  _callbackRedirectResult(result) {
-    if (result.user) {
-      return this.emitAsync('signin', result);
-    }
-  }
-
-  // リダイレクトログイン失敗時の処理
-  _callbackRedirectResultFail(e) {
-    var message = this._codeToErrorMessage(e.code);
-    e.message = message;
-
-    this.emit('fail', e);
   }
 
   // 許可されているログイン方法を返す
